@@ -24,7 +24,7 @@
 # 
 # 运行下面区域的代码以载入波士顿房屋数据集，以及一些此项目所需的 Python 库。如果成功返回数据集的大小，表示数据集已载入成功。
 
-# In[17]:
+# In[1]:
 
 
 # Import libraries necessary for this project
@@ -47,7 +47,7 @@ features = data.drop('MEDV', axis = 1)
 print("Boston housing dataset has {} data points with {} variables each.".format(*data.shape))
 
 
-# In[18]:
+# In[2]:
 
 
 data.head(20)
@@ -69,23 +69,23 @@ data.head(20)
 # - 计算 `prices` 中的 `'MEDV'` 的最小值、最大值、均值、中值和标准差；
 # - 将运算结果储存在相应的变量中。
 
-# In[19]:
+# In[3]:
 
 
 # TODO: Minimum price of the data
-minimum_price = prices.min()
+minimum_price = np.amin(prices)
 
 # TODO: Maximum price of the data
-maximum_price = prices.max()
+maximum_price = np.amax(prices)
 
 # TODO: Mean price of the data
-mean_price = prices.mean()
+mean_price = np.average(prices)
 
 # TODO: Median price of the data
-median_price = prices.median()
+median_price = np.median(prices)
 
 # TODO: Standard deviation of prices of the data
-std_price = prices.std()
+std_price = np.std(prices)
 
 # Show the calculated statistics
 print("Statistics for Boston housing dataset:\n")
@@ -125,7 +125,7 @@ print("Standard deviation of prices: ${:.2f}".format(std_price))
 # - 使用 `sklearn.metrics` 中的 [`r2_score`](http://scikit-learn.org/stable/modules/generated/sklearn.metrics.r2_score.html) 来计算 `y_true` 和 `y_predict` 的 $R^2$ 值，作为对其表现的评判。
 # - 将他们的表现评分储存到 `score` 变量中。
 
-# In[20]:
+# In[4]:
 
 
 # TODO: Import 'r2_score'
@@ -163,7 +163,7 @@ def performance_metric(y_true, y_predict):
 # * $R^2$ 在0到1之间表示因变量可预测的程度。
 # * $R^2$ 为0.40意味着 Y 中40％的方差可以从 X 预测。
 
-# In[21]:
+# In[5]:
 
 
 # Calculate the performance of this model
@@ -185,7 +185,7 @@ print("Model has a coefficient of determination, R^2, of {:.3f}.".format(score))
 #   - 选定一个数值以设定 `train_test_split` 中的 `random_state` ，这会确保结果的一致性；
 # * 将分割后的训练集与测试集分配给 `X_train`, `X_test`, `y_train` 和 `y_test`。
 
-# In[22]:
+# In[6]:
 
 
 # TODO: Import 'train_test_split'
@@ -217,7 +217,7 @@ print("Training and testing split was successful.")
 # 
 # 运行下方区域中的代码，并利用输出的图形回答下面的问题。
 
-# In[23]:
+# In[7]:
 
 
 # Produce learning curves for varying training set sizes and maximum depths
@@ -241,7 +241,7 @@ vs.ModelLearning(features, prices)
 # 
 # **运行下方区域中的代码，并利用输出的图形并回答下面的问题5与问题6。**
 
-# In[24]:
+# In[8]:
 
 
 vs.ModelComplexity(X_train, y_train)
@@ -266,8 +266,8 @@ vs.ModelComplexity(X_train, y_train)
 # **提示**：查看问题5上方的图表，并查看模型在不同 `depth`下的验证分数。随着深度的增加模型的表现力会变得更好吗？我们在什么情况下获得最佳验证分数而不会使我们的模型过度复杂？请记住，奥卡姆剃刀：“在竞争性假设中，应该选择假设最少的那一个。”
 
 # ### 问题 6 - 回答:
-# 答：最大深度为4的模型能够最好地对未见过的数据进行预测。 
-# 因为当模型为4时训练集的数据评分开始缓慢上升，而验证集正在缓慢下降。
+# 答：最大深度为3的模型能够最好地对未见过的数据进行预测。 
+# 因为当模型为3时训练集的数据评分开始缓慢上升，而验证集正在缓慢下降。
 
 # ---
 # ## 第五步. 评估模型的表现
@@ -281,7 +281,7 @@ vs.ModelComplexity(X_train, y_train)
 
 # ### 问题 7 - 回答: 
 # 1.网格搜索法就是遍历所有给定的参数来优化模型。 
-# 2.在网格搜索中，用了C这个参数，就是惩罚因子，如果惩罚因子设定值越大，准确度要求就会很高，会导致过拟合的情况，而当惩罚因子设定值趋近于0，则会使间隔过大，从而忽略噪声，使得模型过于泛化，而使模型欠拟合。
+# 2.将各个参数可能的取值进行排列组合，列出所有可能的组合结果生成“网格”。然后将各组合用于SVM训练，并使用交叉验证对表现进行评估。在拟合函数尝试了所有的参数组合后，返回一个合适的分类器，自动调整至最佳参数组合，可以通过clf.best_params_获得参数值  ————百度知道
 
 # ### 问题 8 - 交叉验证
 # - 什么是K折交叉验证法（k-fold cross-validation）？
@@ -312,7 +312,7 @@ vs.ModelComplexity(X_train, y_train)
 #   
 # 如果你对 Python 函数的默认参数定义和传递不熟悉，可以参考这个MIT课程的[视频](http://cn-static.udacity.com/mlnd/videos/MIT600XXT114-V004200_DTH.mp4)。
 
-# In[25]:
+# In[11]:
 
 
 # TODO:Import 'make_scorer', 'DecisionTreeRegressor', and 'GridSearchCV'
@@ -326,14 +326,14 @@ def fit_model(X, y):
     
     # Create cross-validation sets from the training data
     # sklearn version 0.18: ShuffleSplit(n_splits=10, test_size=0.1, train_size=None, random_state=None)
-    # sklearn versiin 0.17: ShuffleSplit(n, n_iter=10, test_size=0.1, train_size=None, random_state=None)
+    # sklearn version 0.17: ShuffleSplit(n, n_iter=10, test_size=0.1, train_size=None, random_state=None)
     cv_sets = ShuffleSplit(n_splits=10, test_size=0.20, random_state=42)
     
     # TODO: Create a decision tree regressor object
     regressor = DecisionTreeRegressor()
 
     # TODO: Create a dictionary for the parameter 'max_depth' with a range from 1 to 10
-    params = {'max_depth':[1,2,3,4,5,6,7,8,9,10]}
+    params = {'max_depth':range(1,11)}
 
     # TODO: Transform 'performance_metric' into a scoring function using 'make_scorer' 
     scoring_fnc = make_scorer(performance_metric)
@@ -341,7 +341,7 @@ def fit_model(X, y):
     # TODO: Create the grid search cv object --> GridSearchCV()
     # Make sure to include the right parameters in the object:
     # (estimator, param_grid, scoring, cv) which have values 'regressor', 'params', 'scoring_fnc', and 'cv_sets' respectively.
-    grid = GridSearchCV(regressor,params,scoring_fnc,cv = 5)
+    grid = GridSearchCV(regressor,params,scoring_fnc,cv=cv_sets)
 
     # Fit the grid search object to the data to compute the optimal model
     grid = grid.fit(X, y)
@@ -358,7 +358,7 @@ def fit_model(X, y):
 # 
 # 运行下方区域内的代码，将决策树回归函数代入训练数据的集合，以得到最优化的模型。
 
-# In[26]:
+# In[12]:
 
 
 # Fit the training data to the model using grid search
@@ -387,7 +387,7 @@ print("Parameter 'max_depth' is {} for the optimal model.".format(reg.get_params
 # 
 # 运行下列的代码区域，使用你优化的模型来为每位客户的房屋价值做出预测。
 
-# In[27]:
+# In[13]:
 
 
 # Produce a matrix for client data
@@ -400,8 +400,25 @@ for i, price in enumerate(reg.predict(client_data)):
     print("Predicted selling price for Client {}'s home: ${:,.2f}".format(i+1, price))
 
 
+# In[14]:
+
+
+# Show the calculated statistics
+print("Statistics for Boston housing dataset:\n")
+print("Minimum price: ${:.2f}".format(minimum_price)) 
+print("Maximum price: ${:.2f}".format(maximum_price))
+print("Mean price: ${:.2f}".format(mean_price))
+print("Median price ${:.2f}".format(median_price))
+print("Standard deviation of prices: ${:.2f}".format(std_price))
+
+
 # ### 问题 10 - 回答： 
-# 从房屋特征数值来看不合理，贫困指数高价格很合理，不过学生比例相对多，应该选择占地面积大的房子，而社区贫困指数最低的却学生比例少的，房子却是最多的。
+# 1.第一名客户可以看出他可能是一个中上的家庭，而第二名客户是家庭状况不太好的家庭，第三名客户可能是家庭很殷实的。 价格排序：客户3>客户1>客户2
+# 2.我们知道中值是靠近数据50%那里，而方差则接近三分之一或者25%那里，平均值是50%，最大值在位于数据末端，最小值位于数据初始阶段   
+# 3.客户1我们看到是34万，接近中间值和平均值，所以预测很合理。 
+# 4.客户2我们看到是26万，接近方差值，但是我们发现它并没有接近最小值，从而发现是否应该增加社区贫困指数的权重，预测不是很合理  
+# 5.客户3我们看到是90万，接近最大值，最大值是100万左右，客户3预测很合理 
+# 6.整体数据看起来还是很合理的。
 
 # ### 编程练习 5
 # 你刚刚预测了三个客户的房子的售价。在这个练习中，你将用你的最优模型在整个测试数据上进行预测, 并计算相对于目标变量的决定系数 $R^2$ 的值。
@@ -412,7 +429,7 @@ for i, price in enumerate(reg.predict(client_data)):
 # * 参考问题2的代码来计算 $R^2$ 的值。
 # 
 
-# In[43]:
+# In[15]:
 
 
 # TODO Calculate the r2 score between 'y_true' and 'y_predict'
@@ -439,14 +456,14 @@ print("Optimal model has R^2 score {:,.2f} on test data".format(r2))
 # 
 # **提示**: 执行下方区域中的代码，采用不同的训练和测试集执行 `fit_model` 函数10次。注意观察对一个特定的客户来说，预测是如何随训练数据的变化而变化的。
 
-# In[44]:
+# In[16]:
 
 
 vs.PredictTrials(features, prices, fit_model, client_data)
 
 
-# ### 问题 12 - 回答： 
-# 预测随着训练数据不断升高，随后又降低，再次升高
+# ### 问题 12 - 回答：   
+# 答：模型健壮能够保证预测的一致性。过拟合的模型不是健壮的。
 
 # ### 问题 13 - 实用性探讨
 # *简单地讨论一下你建构的模型能否在现实世界中使用？* 
