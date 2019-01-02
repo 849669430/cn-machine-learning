@@ -19,7 +19,7 @@
 # 
 # 运行下面的的代码单元以载入整个客户数据集和一些这个项目需要的 Python 库。如果你的数据集载入成功，你将看到后面输出数据集的大小。
 
-# In[2]:
+# In[5]:
 
 
 # 检查你的Python版本
@@ -28,7 +28,7 @@ if version_info.major != 3:
     raise Exception('请使用Python 3.x 来完成此项目')
 
 
-# In[3]:
+# In[6]:
 
 
 # 引入这个项目需要的库
@@ -56,7 +56,7 @@ except:
 # 
 # 运行下面的代码单元给出数据集的一个统计描述。注意这个数据集包含了6个重要的产品类型：**'Fresh'**, **'Milk'**, **'Grocery'**, **'Frozen'**, **'Detergents_Paper'**和 **'Delicatessen'**。想一下这里每一个类型代表你会购买什么样的产品。
 
-# In[4]:
+# In[7]:
 
 
 # 显示数据集的一个描述
@@ -66,7 +66,7 @@ display(data.describe())
 # ### 练习: 选择样本
 # 为了对客户有一个更好的了解，并且了解代表他们的数据将会在这个分析过程中如何变换。最好是选择几个样本数据点，并且更为详细地分析它们。在下面的代码单元中，选择**三个**索引加入到索引列表`indices`中，这三个索引代表你要追踪的客户。我们建议你不断尝试，直到找到三个明显不同的客户。
 
-# In[6]:
+# In[8]:
 
 
 # TODO：从数据集中选择三个你希望抽样的数据点的索引
@@ -105,7 +105,7 @@ display(samples)
 #  - 导入一个 DecisionTreeRegressor （决策树回归器），设置一个 `random_state`，然后用训练集训练它。
 #  - 使用回归器的 `score` 函数输出模型在测试集上的预测得分。
 
-# In[9]:
+# In[15]:
 
 
 from sklearn.model_selection import train_test_split  
@@ -114,7 +114,7 @@ from sklearn.tree import DecisionTreeRegressor
 new_data = data.drop(['Detergents_Paper'],axis = 1,inplace = False)
 
 # TODO：使用给定的特征作为目标，将数据分割成训练集和测试集
-X_train, X_test, y_train, y_test = train_test_split(new_data, data['Grocery'],test_size=0.25,random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(new_data, data['Detergents_Paper'],test_size=0.25,random_state=0)
 
 # TODO：创建一个DecisionTreeRegressor（决策树回归器）并在训练集上训练它
 regressor = DecisionTreeRegressor(random_state = 0).fit(X_train,y_train)
@@ -129,12 +129,12 @@ print("在测试集的预测得分：{:.2f}".format(score))
 # **提示：** 决定系数（coefficient of determination），$R^2$ 结果在0到1之间，1表示完美拟合，一个负的 $R^2$ 表示模型不能够拟合数据。
 
 # **回答:**
-# 我尝试预测清洁纸这个特征，特征的得分是0.98，模型能够很好的拟合数据，但是这个特征对于区分用户的消费习惯没有必要，因为这个这个特征可以根据其他特征预测出来
+# 我尝试预测清洁纸这个特征，特征的得分是0.73，模型能够很好的拟合数据，但是这个特征对于区分用户的消费习惯没有必要，因为这个这个特征可以根据其他特征预测出来
 
 # ### 可视化特征分布
 # 为了能够对这个数据集有一个更好的理解，我们可以对数据集中的每一个产品特征构建一个散布矩阵（scatter matrix）。如果你发现你在上面尝试预测的特征对于区分一个特定的用户来说是必须的，那么这个特征和其它的特征可能不会在下面的散射矩阵中显示任何关系。相反的，如果你认为这个特征对于识别一个特定的客户是没有作用的，那么通过散布矩阵可以看出在这个数据特征和其它特征中有关联性。运行下面的代码以创建一个散布矩阵。
 
-# In[14]:
+# In[16]:
 
 
 # 对于数据中的每一对特征构造一个散布矩阵
@@ -163,7 +163,7 @@ pd.plotting.scatter_matrix(data, alpha = 0.3, figsize = (14,8), diagonal = 'kde'
 #  - 使用 `np.log` 函数在数据 `data` 上做一个对数缩放，然后将它的副本（不改变原始data的值）赋值给 `log_data`。 
 #  - 使用 `np.log` 函数在样本数据 `samples` 上做一个对数缩放，然后将它的副本赋值给 `log_samples`。
 
-# In[15]:
+# In[17]:
 
 
 # TODO：使用自然对数缩放数据
@@ -181,7 +181,7 @@ pd.plotting.scatter_matrix(log_data, alpha = 0.3, figsize = (14,8), diagonal = '
 # 
 # 运行下面的代码以观察样本数据在进行了自然对数转换之后如何改变了。
 
-# In[16]:
+# In[18]:
 
 
 # 展示经过对数变换后的样本数据
@@ -200,7 +200,7 @@ display(log_samples)
 # **注意：** 如果你选择移除异常值，请保证你选择的样本点不在这些移除的点当中！
 # 一旦你完成了这些功能，数据集将存储在 `good_data` 中。
 
-# In[17]:
+# In[21]:
 
 
 # 对于每一个特征，找到值异常高或者是异常低的数据点
@@ -212,7 +212,7 @@ for feature in log_data.keys():
     Q3 = np.percentile(log_data[feature], 75)
     
     # TODO: 使用四分位范围计算异常阶（1.5倍的四分位距）
-    step = np.percentile(log_data[feature],1.5*(Q3-Q1))
+    step = 1.5*(Q3-Q1)
     
     # 显示异常点
     print("Data points considered outliers for the feature '{}':".format(feature))
@@ -242,7 +242,7 @@ good_data = log_data.drop(log_data.index[outliers]).reset_index(drop = True)
 #  - 导入 `sklearn.decomposition.PCA` 并且将 `good_data` 用 PCA 并且使用6个维度进行拟合后的结果保存到 `pca` 中。
 #  - 使用 `pca.transform` 将 `log_samples` 进行转换，并将结果存储到 `pca_samples` 中。
 
-# In[18]:
+# In[22]:
 
 
 from sklearn.decomposition import PCA
@@ -278,7 +278,7 @@ pca_results = vs.pca_results(good_data, pca)
 # ### 观察
 # 运行下面的代码，查看经过对数转换的样本数据在进行一个6个维度的主成分分析（PCA）之后会如何改变。观察样本数据的前四个维度的数值。考虑这和你初始对样本点的解释是否一致。
 
-# In[19]:
+# In[23]:
 
 
 # 展示经过PCA转换的sample log-data
@@ -293,7 +293,7 @@ display(pd.DataFrame(np.round(pca_samples, 4), columns = pca_results.index.value
 #  - 使用 `pca.transform` 将 `good_data` 进行转换，并将结果存储在 `reduced_data` 中。
 #  - 使用 `pca.transform` 将 `log_samples` 进行转换，并将结果存储在 `pca_samples` 中。
 
-# In[20]:
+# In[24]:
 
 
 # TODO：通过在good data上进行PCA，将其转换成两个维度
@@ -312,7 +312,7 @@ reduced_data = pd.DataFrame(reduced_data, columns = ['Dimension 1', 'Dimension 2
 # ### 观察
 # 运行以下代码观察当仅仅使用两个维度进行 PCA 转换后，这个对数样本数据将怎样变化。观察这里的结果与一个使用六个维度的 PCA 转换相比较时，前两维的数值是保持不变的。
 
-# In[21]:
+# In[25]:
 
 
 # 展示经过两个维度的PCA转换之后的样本log-data
@@ -324,7 +324,7 @@ display(pd.DataFrame(np.round(pca_samples, 4), columns = ['Dimension 1', 'Dimens
 # 
 # 运行下面的代码来创建一个降维后数据的双标图。
 
-# In[22]:
+# In[26]:
 
 
 # 可视化双标图
@@ -363,7 +363,7 @@ vs.biplot(good_data, reduced_data, pca)
 #  - 导入 `sklearn.metrics.silhouette_score` 包并计算 `reduced_data` 相对于 `preds` 的轮廓系数。
 #    - 将轮廓系数赋值给 `score` 并输出结果。
 
-# In[32]:
+# In[27]:
 
 
 # TODO：在降维后的数据上使用你选择的聚类算法 
@@ -397,7 +397,7 @@ print(score)
 # #### 聚类可视化
 # 一旦你选好了通过上面的评价函数得到的算法的最佳聚类数目，你就能够通过使用下面的代码块可视化来得到的结果。作为实验，你可以试着调整你的聚类算法的聚类的数量来看一下不同的可视化结果。但是你提供的最终的可视化图像必须和你选择的最优聚类数目一致。
 
-# In[33]:
+# In[28]:
 
 
 # 从已有的实现中展示聚类的结果
@@ -412,7 +412,7 @@ vs.cluster_results(reduced_data, preds, centers, pca_samples)
 #  - 使用 `np.log` 的反函数 `np.exp` 反向转换 `log_centers` 并将结果存储到 `true_centers` 中。
 # 
 
-# In[43]:
+# In[29]:
 
 
 # TODO：反向转换中心点
@@ -428,7 +428,7 @@ true_centers.index = segments
 display(true_centers)
 
 
-# In[44]:
+# In[30]:
 
 
 #数据可视化
@@ -451,7 +451,7 @@ true_centers.plot(kind = 'bar',figsize=(15,6))
 # 
 # 运行下面的代码单元以找到每一个样本点被预测到哪一个簇中去。
 
-# In[45]:
+# In[31]:
 
 
 # 显示预测结果
@@ -492,7 +492,7 @@ for i, pred in enumerate(sample_preds):
 # 
 # **提示**：在下面的代码单元中，我们提供了一个已经做好聚类的数据（聚类结果为数据中的cluster属性），我们将在这个数据集上做一个小实验。尝试运行下面的代码看看我们尝试预测‘Region’的时候，如果存在聚类特征'cluster'与不存在相比对最终的得分会有什么影响？这对你有什么启发？
 
-# In[46]:
+# In[32]:
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -531,7 +531,7 @@ print("使用cluster特征的得分: %.4f"%score_with_cluster)
 # 
 # 运行下面的代码单元以查看哪一个数据点在降维的空间中被标记为 `'HoReCa'` (旅馆/餐馆/咖啡厅)或者 `'Retail'`。另外，你将发现样本点在图中被圈了出来，用以显示他们的标签。
 
-# In[47]:
+# In[33]:
 
 
 # 根据‘Channel‘数据显示聚类的结果
