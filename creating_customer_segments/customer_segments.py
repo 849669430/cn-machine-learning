@@ -63,12 +63,6 @@ except:
 display(data.describe())
 
 
-# In[5]:
-
-
-data.head()
-
-
 # ### 练习: 选择样本
 # 为了对客户有一个更好的了解，并且了解代表他们的数据将会在这个分析过程中如何变换。最好是选择几个样本数据点，并且更为详细地分析它们。在下面的代码单元中，选择**三个**索引加入到索引列表`indices`中，这三个索引代表你要追踪的客户。我们建议你不断尝试，直到找到三个明显不同的客户。
 
@@ -91,7 +85,13 @@ display(samples)
 # **提示：** 企业的类型包括超市、咖啡馆、零售商以及其他。注意不要使用具体企业的名字，比如说在描述一个餐饮业客户时，你不能使用麦当劳。  
 # 
 
-# **回答:**第一个客户应该是旅馆，因为对杂货和对清洁纸的进货量大，而对新鲜食物进货量相对较少。而2号客户有可能是餐厅，因为他对新鲜食物的进货量最大，第三个客户应该是零售商，6个特征没有一个是超过1000的
+# **回答:** 
+# 
+# 第一个客户应该是旅馆，我们从第三个特征杂货分析，他是位于75%以上的数据，而清洁纸也是位于75%以上的数值奶制品则在均值一下。 
+# 
+# 第二个客户有可能是餐厅，因为对于新鲜食物它在统计值里在75%以后的数据，奶制品在25%到50%左右，杂货品在25%到50%之间，冷冻食品在25%到50%之间，清洁纸在50到75%之间。  
+# 
+# 第三个客户应该是零售商，6个特征需求量都很小，都在统计值25%以下。
 
 # ### 练习: 特征相关性
 # 一个有趣的想法是，考虑这六个类别中的一个（或者多个）产品类别，是否对于理解客户的购买行为具有实际的相关性。也就是说，当用户购买了一定数量的某一类产品，我们是否能够确定他们必然会成比例地购买另一种类的产品。有一个简单的方法可以检测相关性：我们用移除了某一个特征之后的数据集来构建一个监督学习（回归）模型，然后用这个模型去预测那个被移除的特征，再对这个预测结果进行评分，看看预测结果如何。
@@ -105,13 +105,13 @@ display(samples)
 #  - 导入一个 DecisionTreeRegressor （决策树回归器），设置一个 `random_state`，然后用训练集训练它。
 #  - 使用回归器的 `score` 函数输出模型在测试集上的预测得分。
 
-# In[7]:
+# In[9]:
 
 
 from sklearn.model_selection import train_test_split  
 from sklearn.tree import DecisionTreeRegressor
 # TODO：为DataFrame创建一个副本，用'drop'函数丢弃一个特征# TODO： 
-new_data = data.drop(['Grocery'],axis = 1,inplace = False)
+new_data = data.drop(['Detergents_Paper'],axis = 1,inplace = False)
 
 # TODO：使用给定的特征作为目标，将数据分割成训练集和测试集
 X_train, X_test, y_train, y_test = train_test_split(new_data, data['Grocery'],test_size=0.25,random_state=0)
@@ -128,13 +128,13 @@ print("在测试集的预测得分：{:.2f}".format(score))
 # 你尝试预测哪一个特征？预测的得分是多少？这个特征对于区分用户的消费习惯来说必要吗？为什么？  
 # **提示：** 决定系数（coefficient of determination），$R^2$ 结果在0到1之间，1表示完美拟合，一个负的 $R^2$ 表示模型不能够拟合数据。
 
-# **回答:**我尝试预测杂货这个特征，因为一般超市都会大量采购杂货，而其他餐厅、商店对于杂货需求没有很大。 
-# 决定系数在0.6，说明可以模型可以很好的拟合数据，而把新鲜食物和清洁纸放进来，却是负的决定系数。
+# **回答:**
+# 我尝试预测清洁纸这个特征，特征的得分是0.98，模型能够很好的拟合数据，但是这个特征对于区分用户的消费习惯没有必要，因为这个这个特征可以根据其他特征预测出来
 
 # ### 可视化特征分布
 # 为了能够对这个数据集有一个更好的理解，我们可以对数据集中的每一个产品特征构建一个散布矩阵（scatter matrix）。如果你发现你在上面尝试预测的特征对于区分一个特定的用户来说是必须的，那么这个特征和其它的特征可能不会在下面的散射矩阵中显示任何关系。相反的，如果你认为这个特征对于识别一个特定的客户是没有作用的，那么通过散布矩阵可以看出在这个数据特征和其它特征中有关联性。运行下面的代码以创建一个散布矩阵。
 
-# In[8]:
+# In[14]:
 
 
 # 对于数据中的每一对特征构造一个散布矩阵
@@ -146,8 +146,12 @@ pd.plotting.scatter_matrix(data, alpha = 0.3, figsize = (14,8), diagonal = 'kde'
 # 
 # **提示：** 这些数据是正态分布（normally distributed）的吗？大多数的数据点分布在哪？
 
-# **回答:** 
-# 这些数据不是正态分布的，大多数数据都分布在Grocery里，在Grocery和fresh有一定程度的相关性，milk和fresh也有一定的相关性
+# **回答:**  
+# 
+# 清洁纸和杂货有有一定程度的相关性，因为他们呈线性拟合。 
+# 清洁纸和奶制品也有一定程度的相关性  
+# 奶制品和杂货也有一定的相关性
+# 根据对角线来的特征分布来看，特征不是呈正态分布的，大多数的数据点分布在0附近。
 
 # ## 数据预处理
 # 在这个部分，你将通过在数据上做一个合适的缩放，并检测异常点（你可以选择性移除）将数据预处理成一个更好的代表客户的形式。预处理数据是保证你在分析中能够得到显著且有意义的结果的重要环节。
@@ -159,7 +163,7 @@ pd.plotting.scatter_matrix(data, alpha = 0.3, figsize = (14,8), diagonal = 'kde'
 #  - 使用 `np.log` 函数在数据 `data` 上做一个对数缩放，然后将它的副本（不改变原始data的值）赋值给 `log_data`。 
 #  - 使用 `np.log` 函数在样本数据 `samples` 上做一个对数缩放，然后将它的副本赋值给 `log_samples`。
 
-# In[9]:
+# In[15]:
 
 
 # TODO：使用自然对数缩放数据
@@ -177,7 +181,7 @@ pd.plotting.scatter_matrix(log_data, alpha = 0.3, figsize = (14,8), diagonal = '
 # 
 # 运行下面的代码以观察样本数据在进行了自然对数转换之后如何改变了。
 
-# In[10]:
+# In[16]:
 
 
 # 展示经过对数变换后的样本数据
@@ -196,7 +200,7 @@ display(log_samples)
 # **注意：** 如果你选择移除异常值，请保证你选择的样本点不在这些移除的点当中！
 # 一旦你完成了这些功能，数据集将存储在 `good_data` 中。
 
-# In[11]:
+# In[17]:
 
 
 # 对于每一个特征，找到值异常高或者是异常低的数据点
@@ -208,7 +212,7 @@ for feature in log_data.keys():
     Q3 = np.percentile(log_data[feature], 75)
     
     # TODO: 使用四分位范围计算异常阶（1.5倍的四分位距）
-    step = np.percentile(log_data[feature], 3/8)
+    step = np.percentile(log_data[feature],1.5*(Q3-Q1))
     
     # 显示异常点
     print("Data points considered outliers for the feature '{}':".format(feature))
@@ -219,18 +223,6 @@ outliers  = [75,66,95,128,193,218,304,305,338,353,357,412,75,122,154,204,402,161
 
 # 以下代码会移除outliers中索引的数据点, 并储存在good_data中
 good_data = log_data.drop(log_data.index[outliers]).reset_index(drop = True) 
-
-
-# In[12]:
-
-
-log_data.describe() 
-
-
-# In[13]:
-
-
-good_data.describe()
 
 
 # ### 问题 4
@@ -250,7 +242,7 @@ good_data.describe()
 #  - 导入 `sklearn.decomposition.PCA` 并且将 `good_data` 用 PCA 并且使用6个维度进行拟合后的结果保存到 `pca` 中。
 #  - 使用 `pca.transform` 将 `log_samples` 进行转换，并将结果存储到 `pca_samples` 中。
 
-# In[14]:
+# In[18]:
 
 
 from sklearn.decomposition import PCA
@@ -271,16 +263,22 @@ pca_results = vs.pca_results(good_data, pca)
 # * 结合每个主成分权重的正负讨论消费行为。
 # * 某一特定维度上的正向增长对应正权特征的增长和负权特征的减少。增长和减少的速率和每个特征的权重相关。[参考资料：Interpretation of the Principal Components](https://onlinecourses.science.psu.edu/stat505/node/54)
 
-# **回答:**   
-# 在一维中我们发现，新鲜食物以及冷冻食物是负相关的，而奶制品、杂货、清洁纸、熟食店则是正相关的  
-# 在二维中我们发现，清洁纸的量一旦减少，那么所有的特征将呈现负相关，可以看出所有的用户都会用到清洁纸。
-# 在三维中我们发现，杂货量增加的缓慢时，新鲜食物将会呈现上升的趋势，清洁纸略微有些下降，奶制品还有冷冻食物、熟食将呈现负相关。  
-# 在四维中我们发现，杂货一旦减少，那么冷冻食物和清洁纸将成负相关，而新鲜食物、奶制品则会略微下降，熟食保持不变
+# **回答:**     
+# 
+# 数据的第一个和第二个成分总共表示的方差是0.7298，前四个主要成分表示的方差是0.9373。 
+# 
+# 在一维中我们发现，生鲜、杂货还有清洁纸三者占权重值大，从这个我们可以知道消费用户可能是咖啡馆。
+# 
+# 在二维中我们发现，生鲜、冷冻食物以及熟食三者权重值大，从这个我们可以知道有可能这个是零售商，因为东西比较齐全。
+# 
+# 在三维中我们发现，生鲜、熟食两者占权重值大，但是是负相关的，所以用户可能是生鲜店或者是熟食店 
+# 
+# 在四维中我们发现，冷冻食物以及熟食呈负相关，但是权重很大，用户可能是熟食店或者冷冻食品店
 
 # ### 观察
 # 运行下面的代码，查看经过对数转换的样本数据在进行一个6个维度的主成分分析（PCA）之后会如何改变。观察样本数据的前四个维度的数值。考虑这和你初始对样本点的解释是否一致。
 
-# In[15]:
+# In[19]:
 
 
 # 展示经过PCA转换的sample log-data
@@ -295,7 +293,7 @@ display(pd.DataFrame(np.round(pca_samples, 4), columns = pca_results.index.value
 #  - 使用 `pca.transform` 将 `good_data` 进行转换，并将结果存储在 `reduced_data` 中。
 #  - 使用 `pca.transform` 将 `log_samples` 进行转换，并将结果存储在 `pca_samples` 中。
 
-# In[16]:
+# In[20]:
 
 
 # TODO：通过在good data上进行PCA，将其转换成两个维度
@@ -314,7 +312,7 @@ reduced_data = pd.DataFrame(reduced_data, columns = ['Dimension 1', 'Dimension 2
 # ### 观察
 # 运行以下代码观察当仅仅使用两个维度进行 PCA 转换后，这个对数样本数据将怎样变化。观察这里的结果与一个使用六个维度的 PCA 转换相比较时，前两维的数值是保持不变的。
 
-# In[17]:
+# In[21]:
 
 
 # 展示经过两个维度的PCA转换之后的样本log-data
@@ -326,7 +324,7 @@ display(pd.DataFrame(np.round(pca_samples, 4), columns = ['Dimension 1', 'Dimens
 # 
 # 运行下面的代码来创建一个降维后数据的双标图。
 
-# In[18]:
+# In[22]:
 
 
 # 可视化双标图
@@ -348,8 +346,9 @@ vs.biplot(good_data, reduced_data, pca)
 
 # **回答:** 
 # K-Means聚类算法的优点是收敛速度快，只形成k类的簇  
-# 高斯混合模型聚类算法的优点是相比于K-means更具一般性，能形成各种不同大小和形状的簇  
-# 我选择K-means聚类算法，因为它的属性值里有聚类中心，且只形成K类的簇。
+# 高斯混合模型聚类算法的优点是相比于K-means更具一般性，能形成各种不同大小和形状的簇，就是对样本的概率密度进行估计，而估计的模型是几个高斯模型加权之和。每个高斯模型就代表了一个类。对样本中的数据分别在几个高斯模型上投影，就会分别得到在各个类上的概率。然后我们可以选取概率最大的类所为判决结果。   
+# https://blog.csdn.net/civiliziation/article/details/38487577    
+# 高斯混合模型并不需要每个特征都符合高斯分布
 # 
 
 # ### 练习: 创建聚类
@@ -368,14 +367,14 @@ vs.biplot(good_data, reduced_data, pca)
 
 
 # TODO：在降维后的数据上使用你选择的聚类算法 
-from sklearn.cluster import KMeans  
+from sklearn.mixture import GaussianMixture  
 from sklearn.metrics import silhouette_score
-clusterer = KMeans(n_clusters =2,random_state=0).fit(reduced_data)
+clusterer = GaussianMixture(n_components =2,random_state=0).fit(reduced_data)
 # TODO：预测每一个点的簇
 preds = clusterer.predict(reduced_data)
 # TODO：找到聚类中心
-centers = clusterer.cluster_centers_
-print(centers)
+centers = clusterer.means_
+
 # TODO：预测在每一个转换后的样本点的类
 sample_preds = clusterer.predict(pca_samples)
 
@@ -388,12 +387,17 @@ print(score)
 # 
 # 汇报你尝试的不同的聚类数对应的轮廓系数。在这些当中哪一个聚类的数目能够得到最佳的轮廓系数？
 
-# **回答:** 当聚类数目为2时，可以得到最佳的轮廓系数。
+# **回答:** 当聚类数目为2时，可以得到0.44的得分 
+#          当聚类数目为3时，得分为0.31  
+#          当聚类数目为4时，得分为0.31 
+#          当聚类数目为5时，得分为0.33 
+#          当聚类数目为6时，得分为0.34   
+#          所以我们选择聚类数目为2
 
 # #### 聚类可视化
 # 一旦你选好了通过上面的评价函数得到的算法的最佳聚类数目，你就能够通过使用下面的代码块可视化来得到的结果。作为实验，你可以试着调整你的聚类算法的聚类的数量来看一下不同的可视化结果。但是你提供的最终的可视化图像必须和你选择的最优聚类数目一致。
 
-# In[30]:
+# In[33]:
 
 
 # 从已有的实现中展示聚类的结果
@@ -408,7 +412,7 @@ vs.cluster_results(reduced_data, preds, centers, pca_samples)
 #  - 使用 `np.log` 的反函数 `np.exp` 反向转换 `log_centers` 并将结果存储到 `true_centers` 中。
 # 
 
-# In[31]:
+# In[43]:
 
 
 # TODO：反向转换中心点
@@ -424,21 +428,30 @@ true_centers.index = segments
 display(true_centers)
 
 
+# In[44]:
+
+
+#数据可视化
+import seaborn as sns   
+true_centers = true_centers.append(data.describe().loc['25%']) 
+true_centers.plot(kind = 'bar',figsize=(15,6))
+
+
 # ### 问题 8
 # 考虑上面的代表性数据点在每一个产品类型的花费总数，你认为这些客户分类代表了哪类客户？为什么？需要参考在项目最开始得到的统计值来给出理由。
 # 
 # **提示：** 一个被分到`'Cluster X'`的客户最好被用 `'Segment X'`中的特征集来标识的企业类型表示。
 
 # **回答:** 
-# 我们可以发现点0和点1可能是cluster1，而2有可能cluster0，因为我们从数据中可以看出在segment0这个中心点，整体数据只有Fresh有1000，但是在segment 1里除了熟食，其他数据都略高
-# 
+# 我们从百分之25的数值可以看出cluster 0所有的值都低于百分之25的值，那么很有可能cluster0就是零售商  
+# 那么cluster1中生鲜、杂货、清洁纸的量都大于百分之25的值，那么有可能代表了餐厅
 
 # ### 问题 9
 # 对于每一个样本点**问题 8 **中的哪一个分类能够最好的表示它？你之前对样本的预测和现在的结果相符吗？
 # 
 # 运行下面的代码单元以找到每一个样本点被预测到哪一个簇中去。
 
-# In[33]:
+# In[45]:
 
 
 # 显示预测结果
@@ -452,7 +465,15 @@ for i, pred in enumerate(sample_preds):
 # 
 # Sample point 1 predicted to be in Cluster 1 
 # 
-# Sample point 2 predicted to be in Cluster 0
+# Sample point 2 predicted to be in Cluster 0    
+# 这是问题1中的解答
+# ![image.png](attachment:image.png)
+
+# 样本点0我们假设他是旅馆，而cluster1我们认为他是餐厅  
+# 
+# 样本1我们假设他是餐厅，而cluster1我们也认为他是餐厅 
+# 
+# 样本点2我们假设他是零售商，而在cluster0分类也是零售商   
 
 # ## 结论
 # 
@@ -464,14 +485,14 @@ for i, pred in enumerate(sample_preds):
 # **提示：** 我们能假设这个改变对所有的客户影响都一致吗？我们怎样才能够确定它对于哪个类型的客户影响最大？
 
 # **回答：**  
-# 看数据是否更加贴靠中心点，如果数据更加贴靠中心点，那么就是这个派送策略的改变有积极的反馈，最终得出结论的依据是轮廓系数的得分。
+# 从两个数据分类中随机选取数量相等的部分用户，将派送时间从每周5天变为每周3天，3周后，观察两个分类中客户的留存率，哪一个客户的留存率高，哪一个就有积极的反馈
 
 # ### 问题 11
 # 通过聚类技术，我们能够将原有的没有标记的数据集中的附加结构分析出来。因为每一个客户都有一个最佳的划分（取决于你选择使用的聚类算法），我们可以把用户分类作为数据的一个[工程特征](https://en.wikipedia.org/wiki/Feature_learning#Unsupervised_feature_learning)。假设批发商最近迎来十位新顾客，并且他已经为每位顾客每个产品类别年度采购额进行了预估。进行了这些估算之后，批发商该如何运用它的预估和非监督学习的结果来对这十个新的客户进行更好的预测？
 # 
 # **提示**：在下面的代码单元中，我们提供了一个已经做好聚类的数据（聚类结果为数据中的cluster属性），我们将在这个数据集上做一个小实验。尝试运行下面的代码看看我们尝试预测‘Region’的时候，如果存在聚类特征'cluster'与不存在相比对最终的得分会有什么影响？这对你有什么启发？
 
-# In[34]:
+# In[46]:
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -510,7 +531,7 @@ print("使用cluster特征的得分: %.4f"%score_with_cluster)
 # 
 # 运行下面的代码单元以查看哪一个数据点在降维的空间中被标记为 `'HoReCa'` (旅馆/餐馆/咖啡厅)或者 `'Retail'`。另外，你将发现样本点在图中被圈了出来，用以显示他们的标签。
 
-# In[35]:
+# In[47]:
 
 
 # 根据‘Channel‘数据显示聚类的结果
@@ -522,6 +543,6 @@ vs.channel_results(reduced_data, outliers, pca_samples)
 # 你选择的聚类算法和聚类点的数目，与内在的旅馆/餐馆/咖啡店和零售商的分布相比，有足够好吗？根据这个分布有没有哪个簇能够刚好划分成'零售商'或者是'旅馆/饭店/咖啡馆'？你觉得这个分类和前面你对于用户分类的定义是一致的吗？
 
 # **回答：**   
-# 没有呢，两个聚类相对比较集中，与前面的定义是一致的，但是没有更加详细的分类。
+# 不一致，他并没有旅馆、饭馆、咖啡馆进行细分。两个类附近的点较多，并没有完全分开。而两端的点又比较分散，像是0和1，0我们认为他是旅馆，就是说清洁纸和杂货量都在75%以上，而生鲜要求的量并不是很高，那么分类时并没有良好的区分，而把它划分在一个总类里，也就是咖啡馆/旅馆/餐厅。
 
 # > **注意**: 当你写完了所有的代码，并且回答了所有的问题。你就可以把你的 iPython Notebook 导出成 HTML 文件。你可以在菜单栏，这样导出**File -> Download as -> HTML (.html)**把这个 HTML 和这个 iPython notebook 一起做为你的作业提交。  
